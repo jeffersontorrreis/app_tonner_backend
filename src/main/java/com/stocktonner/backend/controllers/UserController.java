@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/sign-up")
 public class UserController {
 
     @Autowired

@@ -20,7 +20,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
 
-    @ManyToMany
+    @ManyToMany  /*Explicação sobre LAZY e EAGER no resumo de springSecurity */
     @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -61,12 +61,16 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
 
-    public String getPassword() {
+    public String getPassword(){
         return password;
     }
 
@@ -93,10 +97,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Set<Role> getRoles() {

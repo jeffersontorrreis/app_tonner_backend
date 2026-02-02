@@ -1,7 +1,6 @@
 package com.stocktonner.backend.entities;
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.HashSet;
@@ -44,7 +43,6 @@ public class Role implements GrantedAuthority {
         this.users = users;
     }
 
-    @Override
     public String getAuthority() {
         return authority;
     }
