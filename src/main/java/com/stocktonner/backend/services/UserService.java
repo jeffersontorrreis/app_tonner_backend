@@ -5,6 +5,7 @@ import com.stocktonner.backend.dtos.RoleDTO;
 import com.stocktonner.backend.dtos.UserDTO;
 import com.stocktonner.backend.entities.Role;
 import com.stocktonner.backend.entities.User;
+import com.stocktonner.backend.repositories.RoleRepository;
 import com.stocktonner.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,9 @@ public class UserService {
     private UserRepository repository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -28,14 +32,11 @@ public class UserService {
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.getRoles().clear();
 
-        for(/*Alvo*/RoleDTO rolDto/*Iterador*/ : dto.getRoles()/*Acessando as roles pelo "UserDTO"*/){
-            Role rol = new Role();
-            rol.setId(rolDto.getId());
+        for (RoleDTO rolDto : dto.getRoles()) {
+            // ← BUSCA a Role existente do banco ao invés de criar uma nova
+            Role rol = roleRepository.findById(rolDto.getId())
+                    .orElseThrow(() -> new RuntimeException("Role não encontrada: " + rolDto.getId()));
             entity.getRoles().add(rol);
-
-            /*Lembre-se que DTO são apenas objetos de transferencia de dados entre camadas, logo
-            * não é uma entidade que de fato representa uma tabela com os dados de fato. Por isso
-            * ainda sim precisamos instanciar a entidade "Role" . */
         }
         entity = repository.save(entity);
         return  new UserDTO(entity);

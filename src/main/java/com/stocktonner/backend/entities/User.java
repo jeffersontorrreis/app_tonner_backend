@@ -20,7 +20,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
 
-    @ManyToMany  /*Explicação sobre LAZY e EAGER no resumo de springSecurity */
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

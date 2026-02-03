@@ -1,6 +1,9 @@
 package com.stocktonner.backend.services;
 
 import com.stocktonner.backend.dtos.AuthenticationDTO;
+import com.stocktonner.backend.dtos.TokenDTO;
+import com.stocktonner.backend.entities.User;
+import com.stocktonner.backend.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +17,9 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private TokenService tokenService;
+
     @Transactional(readOnly = true)
     public ResponseEntity login(AuthenticationDTO dto){
         /* Conseguimos trazer o email e password graças ao metodo "loadUserByUsername" que acessa o banco.
@@ -25,6 +31,11 @@ public class AuthenticationService {
         //Caso os dados do usuario exista o mesmo é autenticado
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+
+        //É nesse momento que geramos o token. Note que o "getPrincipal" é ja o username, senha e perfil ja dentro do token gerado...
+        var token = tokenService.generateToken((User) auth.getPrincipal());
+
+        //Pronto agora de fato o usuario recebe um token...
+        return ResponseEntity.ok(new TokenDTO(token));
     }
 }
